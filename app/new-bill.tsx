@@ -151,7 +151,6 @@ export default function NewBillScreen() {
     }
   };
 
-  console.log(taxMode === TaxMode.CGST_SGST);
 
   function handlePrintPipeline(): void {
     const payload = getPayload();

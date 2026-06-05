@@ -92,7 +92,6 @@ export function ClientDropdown({
       setNewAddress("");
       setNewGstin("");
     } catch (error) {
-      console.error("Failed to create new client master record.", error);
       Alert.alert(
         "Storage Failure",
         "Failed to preserve client master fields data entry.",
