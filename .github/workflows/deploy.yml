@@ -1,0 +1,38 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main # Triggers the automation workflow every time you push to the main branch
+
+jobs:
+  deploy:
+    name: Build and Publish Update to Expo Cloud
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Pull down the code repository from GitHub into the virtual machine runner
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Initialize a secure Node.js environment with automated caching
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm # Automatically caches node_modules to optimize speed on subsequent runs
+
+      # 3. Install the dependencies
+      - name: Install Project Dependencies
+        run: npm install
+
+      # 4. Authenticate and configure the Expo EAS command line tools using your hidden secret
+      - name: Setup Expo & EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      # 5. Compile and push the code bundle to your dad's Expo Go runtime profile
+      - name: Publish EAS Update
+        run: npx eas update --branch main --message "${{ github.event.head_commit.message }}"
