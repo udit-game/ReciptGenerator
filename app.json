@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ReciptGenerator",
-    "slug": "ReciptGenerator",
+    "slug": "reciptgenerator",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "reciptgenerator",
