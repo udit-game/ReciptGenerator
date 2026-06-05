@@ -1,14 +1,13 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, useColorScheme, TextInputProps } from 'react-native';
-import { Theme } from '../../constants/Colors';
+import { View, Text, TextInput, StyleSheet, TextInputProps } from 'react-native';
+import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 interface InputProps extends TextInputProps {
   label: string;
 }
 
 export const InputField = React.memo(function InputField({ label, editable = true, ...props }: InputProps) {
-  const scheme = useColorScheme();
-  const colors = Theme[scheme as keyof typeof Theme] || Theme.light;
+  const { themeMode, currentTheme: colors } = useAppTheme();
 
   return (
     <View style={[styles.wrapper, !editable && { opacity: 0.65 }]}>

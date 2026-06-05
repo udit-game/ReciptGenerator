@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, FlatList, StyleSheet, useColorScheme, Alert, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, FlatList, StyleSheet, Alert, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Theme } from '@/constants/Colors';
 import { InputField } from '../InputField';
 import { useProductStorage, Product } from '@/hooks/RepoHooks/useProductStorage';
+import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 interface Props {
   onSelectProduct: (product: Product | null) => void;
@@ -14,8 +14,7 @@ interface Props {
 }
 
 export function ProductDropdown({ onSelectProduct, currentValue, editable, label = "Product Item", showAddOption = true }: Props) {
-  const scheme = useColorScheme();
-  const colors = Theme[scheme as keyof typeof Theme] || Theme.light;
+  const { themeMode, currentTheme: colors } = useAppTheme();
 
   const { fetchAllProducts, insertNewProduct } = useProductStorage();
 

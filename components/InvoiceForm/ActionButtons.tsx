@@ -1,8 +1,8 @@
 // components/InvoiceForm/ActionButtons.tsx
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, useColorScheme } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Theme } from '../../constants/Colors';
+import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 interface ActionButtonsProps {
   isSaved: boolean;
@@ -12,8 +12,7 @@ interface ActionButtonsProps {
 }
 
 export function ActionButtons({ isSaved, onSave, onPrint, onShare }: ActionButtonsProps) {
-  const scheme = useColorScheme();
-  const colors = Theme[scheme as keyof typeof Theme] || Theme.light;
+  const { themeMode, currentTheme: colors } = useAppTheme();
 
   return (
     <View style={styles.container}>

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { FlatList, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
 
@@ -9,10 +9,10 @@ import { InvoiceHistoryRow } from '@/components/InvoiceHistory/InvoiceHistoryRow
 import { HistoryFilterPanel } from '@/components/InvoiceHistory/HistoryFilterPanel';
 import { useProductStorage } from '@/hooks/RepoHooks/useProductStorage';
 import { useErrorLog } from '@/hooks/RepoHooks/useErrorLog';
+import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 export default function HistoryScreen() {
-  const scheme = useColorScheme();
-  const colors = Theme[scheme as keyof typeof Theme] || Theme.light;
+  const { themeMode, currentTheme: colors } = useAppTheme();
 
   const { getInvoices, getInvoiceItems } = useInvoiceStorage();
   const { getProductById } = useProductStorage();

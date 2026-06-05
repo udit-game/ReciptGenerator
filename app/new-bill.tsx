@@ -10,7 +10,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,11 +28,11 @@ import { generateRandomId } from "@/utils/Crypto";
 import { useInvoiceActions } from "../hooks/LibHooks/useInvoiceActions";
 import { useInvoiceAutofill } from "../hooks/RepoHooks/useInvoiceAutofill";
 import { useInvoiceStorage } from "../hooks/RepoHooks/useInvoiceStorage";
+import { useAppTheme } from "@/hooks/Context/ThemeContext";
 
 export default function NewBillScreen() {
   const router = useRouter();
-  const scheme = useColorScheme();
-  const colors = Theme[scheme as keyof typeof Theme] || Theme.light;
+  const { themeMode, currentTheme: colors } = useAppTheme();
 
   // Transaction Configuration Core State pointers
   const [selectedClientId, setSelectedClientId] = useState<string>("");

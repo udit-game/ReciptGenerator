@@ -1,14 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, useColorScheme } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Theme } from '../../constants/Colors';
+import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const colors = Theme[colorScheme as keyof typeof Theme] || Theme.light;
+  const { themeMode, currentTheme: colors } = useAppTheme();
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>

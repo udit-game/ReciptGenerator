@@ -1,12 +1,9 @@
-import { Tabs } from 'expo-router';
-import { useColorScheme } from 'react-native';
-import { Theme } from '../../constants/Colors';
 import { NativeTabs, Icon, Label, VectorIcon } from 'expo-router/unstable-native-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 export default function TabsLayout() {
-  const colorScheme = useColorScheme();
-  const colors = Theme[colorScheme as keyof typeof Theme];
+  const { themeMode, currentTheme: colors } = useAppTheme();
 
   return (
      <NativeTabs

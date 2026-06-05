@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, useColorScheme } from 'react-native';
-import { Theme } from '../../constants/Colors';
+import { View, Text, StyleSheet } from 'react-native';
+import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 interface FormCardProps {
   title: string;
@@ -8,8 +8,7 @@ interface FormCardProps {
 }
 
 export const FormCard = React.memo(function FormCard({ title, children }: FormCardProps) {
-  const scheme = useColorScheme();
-  const colors = Theme[scheme as keyof typeof Theme] || Theme.light;
+  const { themeMode, currentTheme: colors } = useAppTheme();
 
   return (
     <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>

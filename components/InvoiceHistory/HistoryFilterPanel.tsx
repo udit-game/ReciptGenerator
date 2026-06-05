@@ -1,11 +1,11 @@
 // components/InvoiceHistory/HistoryFilterPanel.tsx
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, useColorScheme, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Theme } from '@/constants/Colors';
 import { InvoiceFilters } from '@/hooks/RepoHooks/useInvoiceStorage';
 import { ClientDropdown } from '../InvoiceForm/Dropdowns/ClientDropdown';
 import { ProductDropdown } from '../InvoiceForm/Dropdowns/ProductDropdown';
+import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 interface FilterPanelProps {
   filters: InvoiceFilters;
@@ -22,8 +22,7 @@ export const HistoryFilterPanel = React.memo(function HistoryFilterPanel({
   onClearFilters,
   selectedProductName
 }: FilterPanelProps) {
-  const scheme = useColorScheme();
-  const colors = Theme[scheme as keyof typeof Theme] || Theme.light;
+  const { themeMode, currentTheme: colors } = useAppTheme();
   
   const [activePill, setActivePill] = useState<ShortcutPills>('CUSTOM');
   const [showAdvanced, setShowAdvanced] = useState(false);

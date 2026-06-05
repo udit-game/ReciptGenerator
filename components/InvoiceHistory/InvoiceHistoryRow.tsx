@@ -1,11 +1,11 @@
 // components/InvoiceHistory/InvoiceHistoryRow.tsx
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Theme } from '@/constants/Colors';
 import { SavedInvoiceSummary } from '@/hooks/RepoHooks/useInvoiceStorage';
 import { GoodsItem } from '@/types/InvoiceTypes';
 import { useErrorLog } from '@/hooks/RepoHooks/useErrorLog';
+import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 interface RowProps {
   invoice: SavedInvoiceSummary;
@@ -13,8 +13,7 @@ interface RowProps {
 }
 
 export const InvoiceHistoryRow = React.memo(function InvoiceHistoryRow({ invoice, onFetchItems }: RowProps) {
-  const scheme = useColorScheme();
-  const colors = Theme[scheme as keyof typeof Theme] || Theme.light;
+  const { themeMode, currentTheme: colors } = useAppTheme();
   const { recordError } = useErrorLog();
 
   const [expanded, setExpanded] = useState(false);

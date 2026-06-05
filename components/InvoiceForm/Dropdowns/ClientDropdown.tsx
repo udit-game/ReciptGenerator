@@ -1,4 +1,3 @@
-import { Theme } from "@/constants/Colors";
 import { Client, useClientStorage } from "@/hooks/RepoHooks/useClientStorage";
 import { TaxMode } from "@/types/InvoiceTypes";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -11,10 +10,10 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { InputField } from "../InputField";
+import { useAppTheme } from "@/hooks/Context/ThemeContext";
 
 interface Props {
   selectedClientId: string;
@@ -31,8 +30,7 @@ export function ClientDropdown({
   label = "Select Client / Consignee",
   showAddOption = true,
 }: Props) {
-  const scheme = useColorScheme();
-  const colors = Theme[scheme as keyof typeof Theme] || Theme.light;
+  const { themeMode, currentTheme: colors } = useAppTheme();
 
   const { fetchAllClients, insertNewClient } = useClientStorage();
 

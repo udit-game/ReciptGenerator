@@ -1,14 +1,12 @@
 import { useErrorLog } from '@/hooks/RepoHooks/useErrorLog';
 import { SavedErrorLog } from '@/types/LogsTypes';
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Button, TextInput, ActivityIndicator, useColorScheme } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Button, TextInput, ActivityIndicator} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { Theme } from '@/constants/Colors';
+import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 export default function LogsScreen() {
-  const scheme = useColorScheme();
-  const colors = Theme[scheme as keyof typeof Theme] || Theme.light;
+  const { themeMode, currentTheme: colors } = useAppTheme();
 
   const { getAllLogs, getLogsByDate } = useErrorLog();
   const [logs, setLogs] = useState<SavedErrorLog[]>([]);
@@ -86,7 +84,7 @@ export default function LogsScreen() {
                   style={[
                     styles.stack, 
                     { 
-                      backgroundColor: scheme === 'dark' ? '#2c2c2e' : '#f1f3f5', 
+                      backgroundColor: themeMode === 'dark' ? '#2c2c2e' : '#f1f3f5', 
                       color: colors.textSecondary 
                     }
                   ]} 
