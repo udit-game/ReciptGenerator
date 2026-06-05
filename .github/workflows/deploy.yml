@@ -35,4 +35,6 @@ jobs:
 
       # 5. Compile and push the code bundle to your dad's Expo Go runtime profile
       - name: Publish EAS Update
-        run: eas update --branch main --message "${{ github.event.head_commit.message }}"
+        run: |
+          eas update --branch main --platform android --message "${{ github.event.head_commit.message }}"
+          eas update --branch main --platform ios --message "${{ github.event.head_commit.message }}"
