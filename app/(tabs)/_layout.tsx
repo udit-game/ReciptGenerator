@@ -1,35 +1,55 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import { useColorScheme } from 'react-native';
+import { Theme } from '../../constants/Colors';
+import { NativeTabs, Icon, Label, VectorIcon } from 'expo-router/unstable-native-tabs';
+import { MaterialIcons } from '@expo/vector-icons';
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export default function TabLayout() {
+export default function TabsLayout() {
   const colorScheme = useColorScheme();
+  const colors = Theme[colorScheme as keyof typeof Theme];
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+     <NativeTabs
+        backgroundColor={colors.card}
+        tintColor={colors.brand}
+        indicatorColor={colors.brand}
+        iconColor={{
+          default: colors.textSecondary,
+          selected: colors.text,
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+        labelStyle={{
+          default: { color: colors.textSecondary },
+          selected: { color: colors.text },
         }}
-      />
-    </Tabs>
+     >
+      <NativeTabs.Trigger name="Home">
+        <Label>Home</Label>
+        <Icon 
+          sf={{ default: 'house', selected: 'house.fill' }} 
+          androidSrc={<VectorIcon family={MaterialIcons} name="home" />}
+        />
+      </NativeTabs.Trigger>
+      {/* <NativeTabs.Trigger name="Stats">
+        <Icon 
+          sf={{ default: 'chart.bar', selected: 'chart.bar.fill' }} 
+          androidSrc={<VectorIcon family={MaterialIcons} name="bar-chart" />}
+        />
+        <Label>Stats</Label>
+      </NativeTabs.Trigger> */}
+      <NativeTabs.Trigger name="History">
+        <Icon 
+          sf={{ default: 'clock', selected: 'clock.fill' }} 
+          androidSrc={<VectorIcon family={MaterialIcons} name="access-time" />}
+        />
+        <Label>History</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="Logs">
+        <Icon 
+          sf={{ default: 'terminal', selected: 'terminal.fill' }} 
+          androidSrc={<VectorIcon family={MaterialIcons} name="terminal" />}
+        />
+        <Label>Logs</Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
