@@ -1,7 +1,6 @@
 import { saiImageBase64 } from "@/assets/images/uriEncode";
 import { InvoiceData } from "@/types/InvoiceTypes";
 
-
 const toWords = (n: number): string => {
     n = Math.round(n);
     const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
@@ -35,7 +34,8 @@ const fmt = (n: number): string => {
     });
 };
 
-export function generateInvoiceHTML(data: InvoiceData): string {
+// Added platform parameter defaulting to 'android'
+export function generateInvoiceHTML(data: InvoiceData, platform: 'android' | 'ios' = 'android'): string {
     const {
         invoiceNo,
         invoiceDate,
@@ -56,7 +56,6 @@ export function generateInvoiceHTML(data: InvoiceData): string {
     const grandTotal = taxable + taxAmt;
     const words = toWords(grandTotal);
 
-    // Render real item lines
     let rowsHTML = goods.map((g, i) => {
         const amt = (g.qty * g.rate).toLocaleString('en-IN', {
             minimumFractionDigits: 2,
@@ -74,7 +73,6 @@ export function generateInvoiceHTML(data: InvoiceData): string {
     `;
     }).join('');
 
-    // Pad layout out gracefully up to 8 lines to keep consistent shape
     const MIN_ROWS = 8;
     if (goods.length < MIN_ROWS) {
         for (let i = goods.length; i < MIN_ROWS; i++) {
@@ -102,6 +100,8 @@ export function generateInvoiceHTML(data: InvoiceData): string {
     `;
     }
 
+    const isIOS = platform === 'ios';
+
     return `
     <!DOCTYPE html>
 <html>
@@ -117,8 +117,25 @@ export function generateInvoiceHTML(data: InvoiceData): string {
       padding: 24px;
       background: #fff;
       position: relative;
+      
+      /* FIX: Forces iOS WebKit to render backgrounds when printing/generating PDFs */
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
 
+    /* Platform-specific styling for the Watermark */
+    ${isIOS ? `
+    .watermark {
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      width: 460px;
+      margin-left: -230px; /* Centers perfectly on iOS without transform bugs */
+      pointer-events: none;
+      z-index: -1;        /* Moves it safely behind content layers */
+      opacity: 0.05;
+    }
+    ` : `
     .watermark {
       position: fixed;
       top: 55%;
@@ -132,11 +149,11 @@ export function generateInvoiceHTML(data: InvoiceData): string {
       user-select: none;
       line-height: 1;
     }
+    `}
 
     .content { position: relative; z-index: 1; }
     .om-sai { font-size: 12px; font-weight: bold; color: #1a3a6e; font-family: 'Comic Sans MS', cursive; margin-bottom: 4px; }
     
-    /* Balanced Header Layout */
     .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
     .brand-name { margin-bottom: 3px; font-size: 24px; font-weight: bold; color: #1a3a6e; font-family: Georgia, serif; }
     .brand-sub { font-size: 11px; font-style: italic; color: #555; margin: 3px 0; }
@@ -144,7 +161,6 @@ export function generateInvoiceHTML(data: InvoiceData): string {
     .tax-inv { font-size: 16px; font-weight: bold; color: #1a3a6e; text-decoration: underline; text-align: right; }
     .gstin-pan { font-size: 11px; color: #1a3a6e; font-weight: bold; text-align: right; margin-top: 3px; }
 
-    /* Compact but Clean Tables */
     table.info { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
     table.info td { border: 1px solid #aab4cc; padding: 7px 10px; vertical-align: top; }
     .lbl { font-size: 10px; color: #666; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .03em; }
@@ -152,17 +168,20 @@ export function generateInvoiceHTML(data: InvoiceData): string {
     
     .section-title { font-size: 11px; font-weight: bold; color: #1a3a6e; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1.5px solid #1a3a6e; padding-bottom: 4px; margin: 16px 0 6px; }
 
-    /* Items Grid Tightened slightly for Page Fit */
     table.goods { width: 100%; border-collapse: collapse; margin: 10px 0; }
     table.goods th { background: #1a3a6e; color: #fff; padding: 8px 10px; font-size: 11.5px; text-align: left; }
     table.goods th.r, table.goods td.r { text-align: right; }
     table.goods th.c, table.goods td.c { text-align: center; }
     
     .item-row td { padding: 7px 10px; border: 1px solid #c5cfe8; height: 30px; vertical-align: middle; font-size: 11.5px; }
-    table.goods tr:nth-child(even) td { background: rgba(26, 58, 110, 0.02); }
+    
+    /* FIX: iOS often struggles with ultra-low alpha values in table elements. Using solid hex for iOS. */
+    table.goods tr:nth-child(even) td { 
+      background: ${isIOS ? '#f4f6fb' : 'rgba(26, 58, 110, 0.02)'}; 
+    }
+    
     .filler-row td { color: transparent; }
 
-    /* Totals & Layout Breaks */
     .words-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
     .words-val { font-size: 13px; font-weight: bold; color: #1a3a6e; line-height: 1.35; }
     
@@ -170,7 +189,6 @@ export function generateInvoiceHTML(data: InvoiceData): string {
     table.totals td { padding: 7px 10px; border: 1px solid #c5cfe8; font-size: 11.5px; height: 28px; }
     table.totals .grand { background: #1a3a6e; color: #fff; font-size: 11.5px; font-weight: bold; }
 
-    /* Footer Elements */
     .terms { font-size: 11px; color: #444; line-height: 1.5; }
     .terms-title { font-weight: bold; font-size: 11px; text-decoration: underline; margin-bottom: 5px; color: #1a3a6e; }
     .sign-area { text-align: right; font-size: 11px; color: #555; }
@@ -179,7 +197,7 @@ export function generateInvoiceHTML(data: InvoiceData): string {
 </head>
 <body>
 
-  <img class="watermark" src="data:image/png;base64, ${saiImageBase64}" alt="" class="stl_04">
+  <img class="watermark" src="data:image/png;base64, ${saiImageBase64}" alt="">
 
   <div class="content">
     <div class="om-sai">Om Sai</div>

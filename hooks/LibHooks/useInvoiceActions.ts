@@ -1,14 +1,14 @@
 import { InvoiceData } from "@/types/InvoiceTypes";
 import * as Print from "expo-print";
 import { shareAsync } from "expo-sharing";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import { generateInvoiceHTML } from "../../utils/generateInvoiceHTML";
 import { File, Paths } from "expo-file-system";
 
 
 export function useInvoiceActions() {
   const prepareHTML = (data: InvoiceData): string => {
-    return generateInvoiceHTML(data);
+    return generateInvoiceHTML(data, Platform.OS === 'ios' ? 'ios' : 'android');
   };
 
   const executeDirectPrint = async (data: InvoiceData) => {
