@@ -2,6 +2,7 @@ import { Client } from '@/hooks/RepoHooks/useClientStorage';
 import { QueryContract } from './engine';
 import { Product } from '@/hooks/RepoHooks/useProductStorage';
 import { ErrorLogPayload, LogFilterPayload } from '@/types/LogsTypes';
+import { InvoiceFilters } from '@/hooks/RepoHooks/useInvoiceStorage';
 
 export const ClientQueries = {
   insert: {
@@ -72,12 +73,32 @@ export const InvoiceQueries = {
 
   fetchAutofill: {
     sql: `
-      SELECT ii.product_id, ii.snapshot_name, ii.snapshot_hsn, ii.quantity, ii.applied_rate
-      FROM invoices i
-      JOIN invoice_items ii ON i.id = ii.invoice_id
-      WHERE i.client_id = ?
-      ORDER BY i.created_at DESC
-      LIMIT 10;
+     SELECT
+        product_id,
+        snapshot_name,
+        snapshot_hsn,
+        quantity,
+        applied_rate
+    FROM (
+        SELECT
+            ii.product_id,
+            ii.snapshot_name,
+            ii.snapshot_hsn,
+            ii.quantity,
+            ii.applied_rate,
+            i.created_at,
+            ROW_NUMBER() OVER (
+                PARTITION BY ii.product_id
+                ORDER BY i.created_at DESC
+            ) AS rn
+        FROM invoices i
+        JOIN invoice_items ii
+            ON i.id = ii.invoice_id
+        WHERE i.client_id = ?
+    )
+    WHERE rn = 1
+    ORDER BY created_at DESC
+    LIMIT 10;
     `,
     requiredFields: ['clientId'],
     prepareArgs: (p: { clientId: string }) => [p.clientId]
@@ -87,15 +108,68 @@ export const InvoiceQueries = {
     sql: `SELECT product_id, snapshot_name, snapshot_hsn, quantity, applied_rate FROM invoice_items WHERE invoice_id = ?;`,
     requiredFields: ['invoiceId'],
     prepareArgs: (p: { invoiceId: string }) => [p.invoiceId]
-  } as QueryContract<{ invoiceId: string }>
+  } as QueryContract<{ invoiceId: string }>,
+
+  buildFilteredQuery: (filters?: InvoiceFilters) => {
+    let baseQuery = `
+      SELECT DISTINCT i.*, c.name as client_name 
+      FROM invoices i
+      LEFT JOIN clients c ON i.client_id = c.id
+    `;
+    
+    if (filters?.productId && filters.productId !== '') {
+      baseQuery += ` INNER JOIN invoice_items ii ON i.id = ii.invoice_id`;
+    }
+
+    const whereClauses: string[] = [];
+    const args: any[] = [];
+
+    if (filters) {
+      const { searchQuery, clientId, productId, startDate, endDate } = filters;
+
+      if (searchQuery && searchQuery.trim() !== '') {
+        whereClauses.push(`(i.invoice_number LIKE ? OR c.name LIKE ?)`);
+        args.push(`%${searchQuery}%`, `%${searchQuery}%`);
+      }
+      if (clientId && clientId !== '') {
+        whereClauses.push(`i.client_id = ?`);
+        args.push(clientId);
+      }
+      if (productId && productId !== '') {
+        whereClauses.push(`ii.product_id = ?`);
+        args.push(productId);
+      }
+      if (startDate && startDate !== '') {
+        whereClauses.push(`i.invoice_date >= ?`);
+        args.push(startDate);
+      }
+      if (endDate && endDate !== '') {
+        whereClauses.push(`i.invoice_date <= ?`);
+        args.push(endDate);
+      }
+    }
+
+    if (whereClauses.length > 0) {
+      baseQuery += ` WHERE ` + whereClauses.join(' AND ');
+    }
+
+    baseQuery += ` ORDER BY i.created_at DESC;`;
+    
+    const safeArgs = args.map(v => v === undefined ? null : v);
+    
+    return {
+      sql: baseQuery,
+      args: safeArgs
+    };
+  }
 };
 
 
 export const LogQueries = {
   insert: {
-    sql: `INSERT INTO error_logs (id, context_tag, error_message, error_stack) VALUES (?, ?, ?, ?);`,
-    requiredFields: ['id', 'context_tag', 'error_message'],
-    prepareArgs: (l: ErrorLogPayload) => [l.id, l.context_tag, l.error_message, l.error_stack ?? null]
+    sql: `INSERT INTO error_logs (id, error_message, error_stack) VALUES (?, ?, ?);`,
+    requiredFields: ['id', 'error_message'],
+    prepareArgs: (l: ErrorLogPayload) => [l.id, l.error_message, l.error_stack ?? null]
   } as QueryContract<ErrorLogPayload>,
 
   fetchByDate: {

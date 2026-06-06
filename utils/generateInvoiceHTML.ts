@@ -93,12 +93,12 @@ export function generateInvoiceHTML(data: InvoiceData): string {
 
     let taxRows = '';
     if (taxMode === 'IGST') {
-        taxRows = `<tr><td style="border:0.5px solid #c5cfe8;">IGST @ 18%</td><td style="text-align:right; border:0.5px solid #c5cfe8;">${fmt(taxAmt)}</td></tr>`;
+        taxRows = `<tr><td style="border:1px solid #c5cfe8;">IGST @ 18%</td><td style="text-align:right; border:1px solid #c5cfe8;">${fmt(taxAmt)}</td></tr>`;
     } else {
         const half = Math.round(taxAmt / 2);
         taxRows = `
-      <tr><td style="border:0.5px solid #c5cfe8;">CGST @ 9%</td><td style="text-align:right; border:0.5px solid #c5cfe8;">${fmt(half)}</td></tr>
-      <tr><td style="border:0.5px solid #c5cfe8;">SGST @ 9%</td><td style="text-align:right; border:0.5px solid #c5cfe8;">${fmt(half)}</td></tr>
+      <tr><td style="border:1px solid #c5cfe8;">CGST @ 9%</td><td style="text-align:right; border:1px solid #c5cfe8;">${fmt(half)}</td></tr>
+      <tr><td style="border:1px solid #c5cfe8;">SGST @ 9%</td><td style="text-align:right; border:1px solid #c5cfe8;">${fmt(half)}</td></tr>
     `;
     }
 
@@ -146,7 +146,7 @@ export function generateInvoiceHTML(data: InvoiceData): string {
 
     /* Compact but Clean Tables */
     table.info { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-    table.info td { border: 0.5px solid #aab4cc; padding: 7px 10px; vertical-align: top; }
+    table.info td { border: 1px solid #aab4cc; padding: 7px 10px; vertical-align: top; }
     .lbl { font-size: 10px; color: #666; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .03em; }
     .val { font-size: 12px; font-weight: 600; color: #1a1a2e; }
     
@@ -158,7 +158,7 @@ export function generateInvoiceHTML(data: InvoiceData): string {
     table.goods th.r, table.goods td.r { text-align: right; }
     table.goods th.c, table.goods td.c { text-align: center; }
     
-    .item-row td { padding: 7px 10px; border: 0.5px solid #c5cfe8; height: 30px; vertical-align: middle; font-size: 11.5px; }
+    .item-row td { padding: 7px 10px; border: 1px solid #c5cfe8; height: 30px; vertical-align: middle; font-size: 11.5px; }
     table.goods tr:nth-child(even) td { background: rgba(26, 58, 110, 0.02); }
     .filler-row td { color: transparent; }
 
@@ -167,11 +167,11 @@ export function generateInvoiceHTML(data: InvoiceData): string {
     .words-val { font-size: 13px; font-weight: bold; color: #1a3a6e; line-height: 1.35; }
     
     table.totals { width: 100%; border-collapse: collapse; }
-    table.totals td { padding: 7px 10px; border: 0.5px solid #c5cfe8; font-size: 11.5px; height: 28px; }
+    table.totals td { padding: 7px 10px; border: 1px solid #c5cfe8; font-size: 11.5px; height: 28px; }
     table.totals .grand { background: #1a3a6e; color: #fff; font-size: 11.5px; font-weight: bold; }
 
     /* Footer Elements */
-    .terms { font-size: 10.5px; color: #444; line-height: 1.5; }
+    .terms { font-size: 11px; color: #444; line-height: 1.5; }
     .terms-title { font-weight: bold; font-size: 11px; text-decoration: underline; margin-bottom: 5px; color: #1a3a6e; }
     .sign-area { text-align: right; font-size: 11px; color: #555; }
     .sign-line { border-top: 1px solid #333; width: 180px; margin-left: auto; padding-top: 5px; margin-top: 45px; text-align: center; }
@@ -245,7 +245,7 @@ export function generateInvoiceHTML(data: InvoiceData): string {
 
     <table style="width:100%; border-collapse: collapse; margin-top: 8px;">
       <tr>
-        <td style="width: 54%; vertical-align: top; background: #eef3fc; border: 0.5px solid #b0c4de; border-radius: 4px; padding: 12px 14px;">
+        <td style="width: 54%; vertical-align: top; background: #eef3fc; border: 1px solid #b0c4de; border-radius: 4px; padding: 12px 14px;">
           <div class="words-label">Total invoice amount in words</div>
           <div class="words-val">${words}</div>
         </td>

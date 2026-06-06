@@ -9,14 +9,16 @@ export async function initializeDatabase(db: SQLite.SQLiteDatabase): Promise<voi
       name TEXT,
       address TEXT,
       gstin TEXT,
-      tax_type TEXT
+      tax_type TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
 
     CREATE TABLE IF NOT EXISTS products (
       id TEXT,
       name TEXT,
       hsn_code TEXT,
-      default_rate REAL
+      default_rate REAL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
 
     CREATE TABLE IF NOT EXISTS invoices (
@@ -34,7 +36,7 @@ export async function initializeDatabase(db: SQLite.SQLiteDatabase): Promise<voi
       tax_type TEXT,
       total_amount REAL,
       paid_amount REAL,
-      created_at TEXT
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
 
     CREATE TABLE IF NOT EXISTS invoice_items (
@@ -49,11 +51,14 @@ export async function initializeDatabase(db: SQLite.SQLiteDatabase): Promise<voi
 
     CREATE TABLE IF NOT EXISTS error_logs (
         id TEXT,
-        context_tag TEXT,
         error_message TEXT,
         error_stack TEXT,
-        created_at TEXT
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
 
+    DROP TABLE IF EXISTS clients;
+    DROP TABLE IF EXISTS products;
+    DROP TABLE IF EXISTS invoices;
+    DROP TABLE IF EXISTS invoice_items;
   `);
 }

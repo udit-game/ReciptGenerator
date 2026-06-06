@@ -8,11 +8,10 @@ import { useSQLiteContext } from 'expo-sqlite';
 export function useErrorLog() {
   const db = useSQLiteContext()
   
-  const recordError = async (contextTag: string, error: any): Promise<void> => {
+  const recordError = async (error: any): Promise<void> => {
     try {
       const payload: ErrorLogPayload = {
         id: generateRandomId(),
-        context_tag: contextTag,
         error_message: error instanceof Error ? error.message : String(error),
         error_stack: error instanceof Error ? error.stack : null,
       };

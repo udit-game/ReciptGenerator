@@ -18,11 +18,9 @@ import { ActionButtons } from "../components/InvoiceForm/ActionButtons";
 import { FormCard } from "../components/InvoiceForm/FormCard";
 import { InputField } from "../components/InvoiceForm/InputField";
 import { LineItemRow } from "../components/InvoiceForm/LineItemRow";
-import { Theme } from "../constants/Colors";
 
 import { ClientDropdown } from "@/components/InvoiceForm/Dropdowns/ClientDropdown";
 import { Client } from "@/hooks/RepoHooks/useClientStorage";
-import { useErrorLog } from "@/hooks/RepoHooks/useErrorLog";
 import { GoodsItem, InvoiceData, TaxMode } from "@/types/InvoiceTypes";
 import { generateRandomId } from "@/utils/Crypto";
 import { useInvoiceActions } from "../hooks/LibHooks/useInvoiceActions";
@@ -61,7 +59,6 @@ export default function NewBillScreen() {
   const { saveInvoice } = useInvoiceStorage();
   const { executeDirectPrint, executeSharePDF } = useInvoiceActions();
   const { fetchHistoricalLineItems } = useInvoiceAutofill();
-  const { recordError } = useErrorLog();
 
   // Handles populating data when a clean client is selected from the dropdown
   const handleClientCatalogSelect = (client: Client | null) => {
@@ -98,7 +95,7 @@ export default function NewBillScreen() {
       setGoods((currentGoods) => {
         const updated = [...currentGoods];
         if (key === "qty" || key === "rate") {
-          updated[index] = { ...updated[index], [key]: Number(value) || 0 };
+          updated[index] = { ...updated[index], [key]: value || 0 };
         } else {
           updated[index] = { ...updated[index], [key]: value };
         }
@@ -133,7 +130,11 @@ export default function NewBillScreen() {
     billToCode,
     taxMode,
     freight: Number(freight) || 0,
-    goods,
+    goods: goods.map(item => ({
+      ...item,
+      qty: Number(item.qty) || 0,
+      rate: Number(item.rate) || 0,
+    })),
   });
 
   const handleSavePipeline = async () => {
@@ -142,7 +143,6 @@ export default function NewBillScreen() {
       setIsSaved(true);
       Alert.alert("Invoice Saved", "Data committed and frozen successfully.");
     } catch (err) {
-      await recordError("InvoiceForm.tsx, 143", err);
       Alert.alert(
         "Error",
         "Could not complete database execution transaction.",

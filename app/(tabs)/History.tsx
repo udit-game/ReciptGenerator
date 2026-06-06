@@ -8,7 +8,6 @@ import { useInvoiceStorage, SavedInvoiceSummary, InvoiceFilters } from '@/hooks/
 import { InvoiceHistoryRow } from '@/components/InvoiceHistory/InvoiceHistoryRow';
 import { HistoryFilterPanel } from '@/components/InvoiceHistory/HistoryFilterPanel';
 import { useProductStorage } from '@/hooks/RepoHooks/useProductStorage';
-import { useErrorLog } from '@/hooks/RepoHooks/useErrorLog';
 import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 export default function HistoryScreen() {
@@ -16,7 +15,6 @@ export default function HistoryScreen() {
 
   const { getInvoices, getInvoiceItems } = useInvoiceStorage();
   const { getProductById } = useProductStorage();
-  const { recordError } = useErrorLog();
   
   const [history, setHistory] = useState<SavedInvoiceSummary[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -44,12 +42,8 @@ export default function HistoryScreen() {
   }, [filters.productId]);
 
   const syncInvoiceTimeline = async (currentFilters: InvoiceFilters) => {
-    try {
-      const invoicesOfHistory = await getInvoices(currentFilters);
-      setHistory(invoicesOfHistory);
-    } catch (err) {
-      await recordError('History.tsx, 143', err);
-    }
+    const invoicesOfHistory = await getInvoices(currentFilters);
+    setHistory(invoicesOfHistory);
   };
 
   useFocusEffect(
@@ -125,10 +119,14 @@ export default function HistoryScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  list: { flex: 1 }, // 2. Added this to force the list to match remaining screen height
+  list: { flex: 1 }, 
   headerContainer: { height: 52, justifyContent: 'center', paddingHorizontal: 16, borderBottomWidth: 1 },
   title: { fontSize: 18, fontWeight: '700' },
-  listPadding: { padding: 16, paddingBottom: 32 },
+  listPadding: { 
+    padding: 16, 
+    paddingBottom: 180 // Increased from 32 to 100
+  },
+  
   emptyWrapper: { flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 40 },
   emptyText: { fontSize: 13, fontWeight: '500', fontStyle: 'italic' }
 });

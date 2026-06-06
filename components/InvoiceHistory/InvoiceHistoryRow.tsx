@@ -4,7 +4,6 @@ import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { SavedInvoiceSummary } from '@/hooks/RepoHooks/useInvoiceStorage';
 import { GoodsItem } from '@/types/InvoiceTypes';
-import { useErrorLog } from '@/hooks/RepoHooks/useErrorLog';
 import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 interface RowProps {
@@ -14,7 +13,6 @@ interface RowProps {
 
 export const InvoiceHistoryRow = React.memo(function InvoiceHistoryRow({ invoice, onFetchItems }: RowProps) {
   const { themeMode, currentTheme: colors } = useAppTheme();
-  const { recordError } = useErrorLog();
 
   const [expanded, setExpanded] = useState(false);
   const [lineItems, setLineItems] = useState<GoodsItem[]>([]);
@@ -26,8 +24,6 @@ export const InvoiceHistoryRow = React.memo(function InvoiceHistoryRow({ invoice
       try {
         const items = await onFetchItems(invoice.id);
         setLineItems(items);
-      } catch (err) {
-        await recordError('InvoiceHistoryRow.tsx, 75', err);
       } finally {
         setLoading(false);
       }
@@ -73,7 +69,7 @@ export const InvoiceHistoryRow = React.memo(function InvoiceHistoryRow({ invoice
                 <Text style={[styles.th, styles.flexRate, { color: colors.textSecondary, textAlign: 'right' }]}>Rate</Text>
               </View>
               {lineItems.map((item, idx) => (
-                <View key={item.productId || String(idx)} style={styles.tableRow}>
+                <View key={item.productId + String(idx)} style={styles.tableRow}>
                   <Text style={[styles.td, styles.flexDesc, { color: colors.text }]} numberOfLines={1}>
                     {item.desc}
                   </Text>

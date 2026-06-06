@@ -1,18 +1,55 @@
 import { useErrorLog } from '@/hooks/RepoHooks/useErrorLog';
 import { SavedErrorLog } from '@/types/LogsTypes';
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Button, TextInput, ActivityIndicator} from 'react-native';
+import { View, Text, FlatList, StyleSheet, Button, TextInput, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
+// SUB-COMPONENT: Individual card tracking its own expansion layout
+function LogCardItem({ item, themeMode, colors }: { item: SavedErrorLog; themeMode: string; colors: any }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <View style={[styles.logCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <View style={styles.logHeader}>
+        <Text style={[styles.timestamp, { color: colors.textSecondary }]}>{item.created_at}</Text>
+      </View>
+      <Text style={[styles.message, { color: colors.text }]}>{item.error_message}</Text>
+      
+      {item.error_stack && (
+        <View style={{ marginTop: 6 }}>
+          <Text 
+            style={[
+              styles.stack, 
+              { 
+                backgroundColor: themeMode === 'dark' ? '#2c2c2e' : '#f1f3f5', 
+                color: colors.textSecondary 
+              }
+            ]} 
+            numberOfLines={isExpanded ? undefined : 2} // Collapsed down to 2 lines by default
+          >
+            {item.error_stack}
+          </Text>
+          
+          <TouchableOpacity 
+            style={styles.toggleButton} 
+            onPress={() => setIsExpanded(!isExpanded)}
+          >
+            <Text style={[styles.toggleText, { color: colors.brand || '#007AFF' }]}>
+              {isExpanded ? "Collapse Trace ▲" : "Expand Trace ▼"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
+}
+
 export default function LogsScreen() {
   const { themeMode, currentTheme: colors } = useAppTheme();
-
   const { getAllLogs, getLogsByDate } = useErrorLog();
   const [logs, setLogs] = useState<SavedErrorLog[]>([]);
   const [loading, setLoading] = useState(true);
-  const { recordError } = useErrorLog();
-  
   const [dateFilter, setDateFilter] = useState(new Date().toISOString().split('T')[0]);
 
   const loadLogs = async (shouldFilter = false) => {
@@ -22,8 +59,6 @@ export default function LogsScreen() {
         ? await getLogsByDate(dateFilter.trim())
         : await getAllLogs();
       setLogs(data);
-    } catch (err) {
-      await recordError('LogsScreen.tsx, 30', err);
     } finally {
       setLoading(false);
     }
@@ -35,12 +70,10 @@ export default function LogsScreen() {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
-      {/* Standardized Header Container */}
       <View style={[styles.headerContainer, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
         <Text style={[styles.title, { color: colors.text }]}>Device System Errors</Text>
       </View>
       
-      {/* Filtering Control Bar matching Theme definitions */}
       <View style={[styles.filterRow, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <TextInput 
           style={[styles.input, { borderColor: colors.border, backgroundColor: colors.background, color: colors.text }]}
@@ -61,6 +94,7 @@ export default function LogsScreen() {
         <FlatList 
           data={logs}
           keyExtractor={(item) => item.id}
+          style={styles.list}
           contentContainerStyle={styles.listPadding}
           showsVerticalScrollIndicator={false}
           initialNumToRender={10}
@@ -73,27 +107,7 @@ export default function LogsScreen() {
             </View>
           }
           renderItem={({ item }) => (
-            <View style={[styles.logCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              <View style={styles.logHeader}>
-                <Text style={styles.tag}>{item.context_tag}</Text>
-                <Text style={[styles.timestamp, { color: colors.textSecondary }]}>{item.created_at}</Text>
-              </View>
-              <Text style={[styles.message, { color: colors.text }]}>{item.error_message}</Text>
-              {item.error_stack && (
-                <Text 
-                  style={[
-                    styles.stack, 
-                    { 
-                      backgroundColor: themeMode === 'dark' ? '#2c2c2e' : '#f1f3f5', 
-                      color: colors.textSecondary 
-                    }
-                  ]} 
-                  numberOfLines={4}
-                >
-                  {item.error_stack}
-                </Text>
-              )}
-            </View>
+            <LogCardItem item={item} themeMode={themeMode} colors={colors} />
           )}
         />
       )}
@@ -103,18 +117,23 @@ export default function LogsScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  list: { flex: 1 },
   headerContainer: { height: 52, justifyContent: 'center', paddingHorizontal: 16, borderBottomWidth: 1 },
   title: { fontSize: 18, fontWeight: '700' },
   filterRow: { flexDirection: 'row', alignItems: 'center', padding: 12, gap: 8, borderBottomWidth: 1 },
   input: { flex: 1, height: 40, borderWidth: 1, borderRadius: 6, paddingHorizontal: 10 },
   buttonGroup: { flexDirection: 'row', gap: 4 },
-  listPadding: { padding: 16, paddingBottom: 32 },
+  listPadding: { 
+    padding: 16, 
+    paddingBottom: 100
+  },
   emptyWrapper: { flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 40 },
   emptyText: { fontSize: 13, fontWeight: '500', fontStyle: 'italic' },
   logCard: { padding: 12, borderRadius: 8, marginBottom: 10, borderWidth: 1 },
-  logHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
-  tag: { fontWeight: 'bold', color: '#dc3545', fontSize: 13 },
+  logHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
   timestamp: { fontSize: 11 },
-  message: { fontSize: 14, fontWeight: '500', marginBottom: 4 },
-  stack: { fontSize: 11, fontFamily: 'monospace', padding: 6, borderRadius: 4 }
+  message: { fontSize: 14, fontWeight: '600', marginBottom: 4 },
+  stack: { fontSize: 11, fontFamily: 'monospace', padding: 8, borderRadius: 4, lineHeight: 15 },
+  toggleButton: { marginTop: 6, paddingVertical: 4, alignItems: 'flex-start' },
+  toggleText: { fontSize: 12, fontWeight: '600' }
 });

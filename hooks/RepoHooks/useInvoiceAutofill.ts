@@ -2,7 +2,6 @@ import { GoodsItem } from '@/types/InvoiceTypes';
 import { safeGetAllAsync } from '@/database/engine';
 import { InvoiceQueries } from '@/database/queries';
 import { useSQLiteContext } from 'expo-sqlite';
-import { useErrorLog } from './useErrorLog';
 
 type HistoricalRow = {
   product_id: string | null;
@@ -14,7 +13,6 @@ type HistoricalRow = {
 
 export function useInvoiceAutofill() {
   const db = useSQLiteContext()
-  const { recordError } = useErrorLog();
   const fetchHistoricalLineItemsByClientId = async (clientId: string): Promise<GoodsItem[] | null> => {
     
     try {
@@ -34,7 +32,6 @@ export function useInvoiceAutofill() {
         rate: row.applied_rate
       }));
     } catch (error) {
-      await recordError('useInvoiceAutofill.ts, 34', error);
       return null;
     }
   };

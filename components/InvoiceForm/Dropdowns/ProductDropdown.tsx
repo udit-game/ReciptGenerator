@@ -35,6 +35,7 @@ export function ProductDropdown({ onSelectProduct, currentValue, editable, label
       setProducts(data);
       setFilteredProducts(data);
     } catch {
+      throw new Error("Failed to load product catalog");
       Alert.alert("Error", "Could not recover product configurations.");
     }
   };

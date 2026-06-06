@@ -1,6 +1,5 @@
 export interface ErrorLogPayload {
   id: string;
-  context_tag: string;
   error_message: string;
   error_stack?: string | null;
 }
@@ -10,5 +9,8 @@ export interface LogFilterPayload {
 }
 
 export interface SavedErrorLog extends ErrorLogPayload {
+  id: string;
+  error_message: string;
+  error_stack: string | null;
   created_at: string;
 }

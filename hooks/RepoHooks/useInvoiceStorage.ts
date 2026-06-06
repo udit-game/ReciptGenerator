@@ -77,53 +77,8 @@ export function useInvoiceStorage() {
   };
 
   const getInvoices = async (filters?: InvoiceFilters): Promise<SavedInvoiceSummary[]> => {
-    
-    let baseQuery = `
-      SELECT DISTINCT i.*, c.name as client_name 
-      FROM invoices i
-      LEFT JOIN clients c ON i.client_id = c.id
-    `;
-    
-    if (filters?.productId && filters.productId !== '') {
-      baseQuery += ` INNER JOIN invoice_items ii ON i.id = ii.invoice_id`;
-    }
-
-    const whereClauses: string[] = [];
-    const args: any[] = [];
-
-    if (filters) {
-      const { searchQuery, clientId, productId, startDate, endDate } = filters;
-
-      if (searchQuery && searchQuery.trim() !== '') {
-        whereClauses.push(`(i.invoice_number LIKE ? OR c.name LIKE ?)`);
-        args.push(`%${searchQuery}%`, `%${searchQuery}%`);
-      }
-      if (clientId && clientId !== '') {
-        whereClauses.push(`i.client_id = ?`);
-        args.push(clientId);
-      }
-      if (productId && productId !== '') {
-        whereClauses.push(`ii.product_id = ?`);
-        args.push(productId);
-      }
-      if (startDate && startDate !== '') {
-        whereClauses.push(`i.invoice_date >= ?`);
-        args.push(startDate);
-      }
-      if (endDate && endDate !== '') {
-        whereClauses.push(`i.invoice_date <= ?`);
-        args.push(endDate);
-      }
-    }
-
-    if (whereClauses.length > 0) {
-      baseQuery += ` WHERE ` + whereClauses.join(' AND ');
-    }
-
-    baseQuery += ` ORDER BY i.created_at DESC`;
-    
-    const safeArgs = args.map(v => v === undefined ? null : v);
-    return await db.getAllAsync<SavedInvoiceSummary>(baseQuery, safeArgs);
+    const { sql, args } = InvoiceQueries.buildFilteredQuery(filters);
+    return await db.getAllAsync<SavedInvoiceSummary>(sql, args);
   };
 
   const getInvoiceItems = async (invoiceId: string): Promise<GoodsItem[]> => {
