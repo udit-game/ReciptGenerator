@@ -4,6 +4,7 @@ import { shareAsync } from "expo-sharing";
 import { Alert, Platform } from "react-native";
 import { generateInvoiceHTML } from "../../utils/generateInvoiceHTML";
 import { File, Paths } from "expo-file-system";
+import { datePart, timePart } from "@/utils/datetime";
 
 
 export function useInvoiceActions() {
@@ -37,7 +38,7 @@ export function useInvoiceActions() {
         .replace(/[^a-zA-Z0-9-_ ]/g, "_")
         .trim();
 
-      const customFilename = `${safeName}_${new Date().getDate().toLocaleString()}.pdf`;
+      const customFilename = `${safeName}_${datePart}_${timePart}.pdf`;
 
       // Create target file in cache
       tempFile = new File(Paths.cache, customFilename);

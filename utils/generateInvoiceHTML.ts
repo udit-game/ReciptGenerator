@@ -132,7 +132,7 @@ export function generateInvoiceHTML(data: InvoiceData, platform: 'android' | 'io
       width: 460px;
       margin-left: -230px; /* Centers perfectly on iOS without transform bugs */
       pointer-events: none;
-      z-index: -1;        /* Moves it safely behind content layers */
+      z-index: 999;        /* Moves it safely behind content layers */
       opacity: 0.05;
     }
     ` : `
