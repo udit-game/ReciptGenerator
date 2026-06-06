@@ -55,10 +55,5 @@ export async function initializeDatabase(db: SQLite.SQLiteDatabase): Promise<voi
         error_stack TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
-
-    DROP TABLE IF EXISTS clients;
-    DROP TABLE IF EXISTS products;
-    DROP TABLE IF EXISTS invoices;
-    DROP TABLE IF EXISTS invoice_items;
   `);
 }
