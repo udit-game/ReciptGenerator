@@ -1,8 +1,8 @@
 import * as SQLite from 'expo-sqlite';
 import { generateRandomId } from '@/utils/Crypto';
 import { TaxMode } from '@/types/InvoiceTypes';
-import { safeGetAllAsync, safeRunAsync } from '@/database/engine';
-import { ClientQueries } from '@/database/queries';
+import { safeGetAllAsync, safeGetFirstAsync, safeRunAsync } from '@/database/engine';
+import { ClientQueries, ProductQueries } from '@/database/queries';
 import { useSQLiteContext } from 'expo-sqlite';
 
 export interface Client {
@@ -32,5 +32,10 @@ export function useClientStorage() {
     return newClient;
   };
 
-  return { fetchAllClients, insertNewClient };
+  const getClientById = async (id: string): Promise<Client | null> => {
+    const result = await safeGetFirstAsync<{ id: string }, Client>(db, ClientQueries.getClientById, {id});
+    return result;
+  }
+
+  return { fetchAllClients, insertNewClient, getClientById };
 }

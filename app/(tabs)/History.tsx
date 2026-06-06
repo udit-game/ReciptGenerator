@@ -4,16 +4,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
 
 import { Theme } from '@/constants/Colors';
-import { useInvoiceStorage, SavedInvoiceSummary, InvoiceFilters } from '@/hooks/RepoHooks/useInvoiceStorage';
 import { InvoiceHistoryRow } from '@/components/InvoiceHistory/InvoiceHistoryRow';
 import { HistoryFilterPanel } from '@/components/InvoiceHistory/HistoryFilterPanel';
 import { useProductStorage } from '@/hooks/RepoHooks/useProductStorage';
 import { useAppTheme } from '@/hooks/Context/ThemeContext';
+import { useInvoiceStorage } from '@/hooks/RepoHooks/useInvoiceStorage';
+import { SavedInvoiceSummary, InvoiceFilters } from '@/types/InvoiceTypes';
 
 export default function HistoryScreen() {
   const { themeMode, currentTheme: colors } = useAppTheme();
 
-  const { getInvoices, getInvoiceItems } = useInvoiceStorage();
+  const { getInvoices, getInvoiceItems, deleteInvoiceById } = useInvoiceStorage();
   const { getProductById } = useProductStorage();
   
   const [history, setHistory] = useState<SavedInvoiceSummary[]>([]);
@@ -76,9 +77,16 @@ export default function HistoryScreen() {
     return await getInvoiceItems(invoiceId);
   }, []);
 
+  const handleDeleteInvoice = useCallback(async (invoiceId: string) => {
+    setRefreshing(true);
+    await deleteInvoiceById(invoiceId);
+    await syncInvoiceTimeline(filters);
+    setRefreshing(false);
+  }, [deleteInvoiceById]);
+
   const renderInvoiceCard = useCallback(({ item }: { item: SavedInvoiceSummary }) => (
-    <InvoiceHistoryRow invoice={item} onFetchItems={handleFetchLineItems} />
-  ), [handleFetchLineItems]);
+    <InvoiceHistoryRow invoice={item} onFetchItems={handleFetchLineItems} onRemove={handleDeleteInvoice} />
+  ), [handleFetchLineItems, handleDeleteInvoice]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>

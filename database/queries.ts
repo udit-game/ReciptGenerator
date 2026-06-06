@@ -2,7 +2,7 @@ import { Client } from '@/hooks/RepoHooks/useClientStorage';
 import { QueryContract } from './engine';
 import { Product } from '@/hooks/RepoHooks/useProductStorage';
 import { ErrorLogPayload, LogFilterPayload } from '@/types/LogsTypes';
-import { InvoiceFilters } from '@/hooks/RepoHooks/useInvoiceStorage';
+import { InvoiceFilters } from '@/types/InvoiceTypes';
 
 export const ClientQueries = {
   insert: {
@@ -15,7 +15,13 @@ export const ClientQueries = {
     sql: `SELECT * FROM clients ORDER BY name ASC;`,
     requiredFields: [],
     prepareArgs: () => []
-  } as QueryContract<void>
+  } as QueryContract<void>,
+
+  getClientById: {
+    sql: `SELECT * FROM clients WHERE id = ?;`,
+    requiredFields: ['id'],
+    prepareArgs: (c: { id: string }) => [c.id]
+  } as QueryContract<{ id: string }>
 };
 
 export const ProductQueries = {
@@ -112,7 +118,7 @@ export const InvoiceQueries = {
 
   buildFilteredQuery: (filters?: InvoiceFilters) => {
     let baseQuery = `
-      SELECT DISTINCT i.*, c.name as client_name 
+      SELECT DISTINCT i.*, c.name as client_name
       FROM invoices i
       LEFT JOIN clients c ON i.client_id = c.id
     `;
@@ -161,7 +167,13 @@ export const InvoiceQueries = {
       sql: baseQuery,
       args: safeArgs
     };
-  }
+  },
+  
+  deleteById: {
+    sql: `DELETE FROM invoices WHERE id = ?;`,
+    requiredFields: ['id'],
+    prepareArgs: (p: { id: string }) => [p.id]
+  } as QueryContract<{ id: string }>
 };
 
 
