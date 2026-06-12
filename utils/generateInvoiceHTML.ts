@@ -133,7 +133,7 @@ export function generateInvoiceHTML(data: InvoiceData, platform: 'android' | 'io
       margin-left: -230px; /* Centers perfectly on iOS without transform bugs */
       pointer-events: none;
       z-index: 999;        /* Moves it safely behind content layers */
-      opacity: 0.05;
+      opacity: 0.3;
     }
     ` : `
     .watermark {
@@ -162,8 +162,8 @@ export function generateInvoiceHTML(data: InvoiceData, platform: 'android' | 'io
     .gstin-pan { font-size: 11px; color: #1a3a6e; font-weight: bold; text-align: right; margin-top: 3px; }
 
     table.info { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-    table.info td { border: 1px solid #aab4cc; padding: 7px 10px; vertical-align: top; }
-    .lbl { font-size: 10px; color: #666; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .03em; }
+    table.info td { border: 1px solid #1f283c; padding: 7px 10px; vertical-align: top; }
+    .lbl { font-size: 10px; color: #1a1a2e; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .03em; }
     .val { font-size: 12px; font-weight: 600; color: #1a1a2e; }
     
     .section-title { font-size: 11px; font-weight: bold; color: #1a3a6e; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1.5px solid #1a3a6e; padding-bottom: 4px; margin: 16px 0 6px; }
@@ -173,7 +173,7 @@ export function generateInvoiceHTML(data: InvoiceData, platform: 'android' | 'io
     table.goods th.r, table.goods td.r { text-align: right; }
     table.goods th.c, table.goods td.c { text-align: center; }
     
-    .item-row td { padding: 7px 10px; border: 1px solid #c5cfe8; height: 30px; vertical-align: middle; font-size: 11.5px; }
+    .item-row td { padding: 7px 10px; border: 1px solid #1f283c; height: 30px; vertical-align: middle; font-size: 11.5px; }
     
     /* FIX: iOS often struggles with ultra-low alpha values in table elements. Using solid hex for iOS. */
     table.goods tr:nth-child(even) td { 
@@ -182,11 +182,11 @@ export function generateInvoiceHTML(data: InvoiceData, platform: 'android' | 'io
     
     .filler-row td { color: transparent; }
 
-    .words-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+    .words-label { font-size: 10px; color: #1a1a2e; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
     .words-val { font-size: 13px; font-weight: bold; color: #1a3a6e; line-height: 1.35; }
     
     table.totals { width: 100%; border-collapse: collapse; }
-    table.totals td { padding: 7px 10px; border: 1px solid #c5cfe8; font-size: 11.5px; height: 28px; }
+    table.totals td { padding: 7px 10px; border: 1px solid #1f283c; font-size: 11.5px; height: 28px; }
     table.totals .grand { background: #1a3a6e; color: #fff; font-size: 11.5px; font-weight: bold; }
 
     .terms { font-size: 11px; color: #444; line-height: 1.5; }
