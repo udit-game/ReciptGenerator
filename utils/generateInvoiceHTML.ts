@@ -133,7 +133,7 @@ export function generateInvoiceHTML(data: InvoiceData, platform: 'android' | 'io
       margin-left: -230px; /* Centers perfectly on iOS without transform bugs */
       pointer-events: none;
       z-index: 999;        /* Moves it safely behind content layers */
-      opacity: 0.3;
+      opacity: 0.1;
     }
     ` : `
     .watermark {
@@ -163,7 +163,7 @@ export function generateInvoiceHTML(data: InvoiceData, platform: 'android' | 'io
 
     table.info { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
     table.info td { border: 1px solid #1f283c; padding: 7px 10px; vertical-align: top; }
-    .lbl { font-size: 10px; color: #1a1a2e; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .03em; }
+    .lbl { font-size: 12px; font-weight: 400; color: #1a1a2e; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .03em; }
     .val { font-size: 12px; font-weight: 600; color: #1a1a2e; }
     
     .section-title { font-size: 11px; font-weight: bold; color: #1a3a6e; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1.5px solid #1a3a6e; padding-bottom: 4px; margin: 16px 0 6px; }
