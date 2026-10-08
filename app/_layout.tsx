@@ -7,7 +7,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import { ThemeProviderWrapper, useAppTheme } from '@/hooks/Context/ThemeContext';
 import { useErrorLog } from '@/hooks/RepoHooks/useErrorLog';
 import { useEffect } from 'react';
-import { LayoutAnimationType } from 'react-native';
+import { LayoutAnimationType } from 'react-native'
 
 
 // 1. Declare the Hermes internal type definitions so the compiler compiles cleanly
