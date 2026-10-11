@@ -36,11 +36,27 @@ export function ProductDropdown({ onSelectProduct, currentValue, editable, label
       setFilteredProducts(data);
     } catch {
       throw new Error("Failed to load product catalog");
-      Alert.alert("Error", "Could not recover product configurations.");
     }
   };
 
-  useEffect(() => { loadCatalog(); }, []);
+  useEffect(() => {
+    let active = true;
+
+    fetchAllProducts().then((data) => {
+      if (active) {
+        setProducts(data);
+        setFilteredProducts(data);
+      }
+    }).catch(() => {
+      if (active) {
+        throw new Error("Failed to load product catalog");
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [fetchAllProducts]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

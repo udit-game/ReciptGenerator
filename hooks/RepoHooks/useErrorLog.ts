@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import * as SQLite from 'expo-sqlite';
 import { generateRandomId } from '@/utils/Crypto';
 import { DB_NAME, safeGetAllAsync, safeRunAsync } from '@/database/engine';
@@ -8,7 +9,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 export function useErrorLog() {
   const db = useSQLiteContext()
   
-  const recordError = async (error: any): Promise<void> => {
+  const recordError = useCallback(async (error: any): Promise<void> => {
     try {
       const payload: ErrorLogPayload = {
         id: generateRandomId(),
@@ -20,19 +21,19 @@ export function useErrorLog() {
     } catch (loggingSystemCrash) {
       console.error("CRITICAL: Log writing mechanism failed on-device:", loggingSystemCrash);
     }
-  };
+  }, [db]);
 
-  const getLogsByDate = async (dateIsoString: string): Promise<SavedErrorLog[]> => {
+  const getLogsByDate = useCallback(async (dateIsoString: string): Promise<SavedErrorLog[]> => {
     return await safeGetAllAsync<LogFilterPayload, SavedErrorLog>(
       db, 
       LogQueries.fetchByDate, 
       { targetDate: dateIsoString }
     );
-  };
+  }, [db]);
 
-  const getAllLogs = async (): Promise<SavedErrorLog[]> => {
+  const getAllLogs = useCallback(async (): Promise<SavedErrorLog[]> => {
     return await safeGetAllAsync<void, SavedErrorLog>(db, LogQueries.fetchAll);
-  };
+  }, [db]);
 
   return { recordError, getLogsByDate, getAllLogs };
 }

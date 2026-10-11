@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { InvoiceFilters } from '@/hooks/RepoHooks/useInvoiceStorage';
+import type { InvoiceFilters } from '@/types/InvoiceTypes';
 import { ClientDropdown } from '../InvoiceForm/Dropdowns/ClientDropdown';
 import { ProductDropdown } from '../InvoiceForm/Dropdowns/ProductDropdown';
 import { useAppTheme } from '@/hooks/Context/ThemeContext';

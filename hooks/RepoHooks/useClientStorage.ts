@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import * as SQLite from 'expo-sqlite';
 import { generateRandomId } from '@/utils/Crypto';
 import { TaxMode } from '@/types/InvoiceTypes';
@@ -15,11 +16,11 @@ export interface Client {
 
 export function useClientStorage() {
   const db = useSQLiteContext()
-  const fetchAllClients = async (): Promise<Client[]> => {
+  const fetchAllClients = useCallback(async (): Promise<Client[]> => {
     return await safeGetAllAsync<void, Client>(db, ClientQueries.fetchAll);
-  };
+  }, [db]);
 
-  const insertNewClient = async (name: string, address: string, gstin: string, taxType: TaxMode): Promise<Client> => {
+  const insertNewClient = useCallback(async (name: string, address: string, gstin: string, taxType: TaxMode): Promise<Client> => {
     const newClient: Client = {
       id: generateRandomId(),
       name,
@@ -30,12 +31,12 @@ export function useClientStorage() {
 
     await safeRunAsync<Client>(db, ClientQueries.insert, newClient);
     return newClient;
-  };
+  }, [db]);
 
-  const getClientById = async (id: string): Promise<Client | null> => {
+  const getClientById = useCallback(async (id: string): Promise<Client | null> => {
     const result = await safeGetFirstAsync<{ id: string }, Client>(db, ClientQueries.getClientById, {id});
     return result;
-  }
+  }, [db]);
 
   return { fetchAllClients, insertNewClient, getClientById };
 }

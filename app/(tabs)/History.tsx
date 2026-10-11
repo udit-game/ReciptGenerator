@@ -3,7 +3,6 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
 
-import { Theme } from '@/constants/Colors';
 import { InvoiceHistoryRow } from '@/components/InvoiceHistory/InvoiceHistoryRow';
 import { HistoryFilterPanel } from '@/components/InvoiceHistory/HistoryFilterPanel';
 import { useProductStorage } from '@/hooks/RepoHooks/useProductStorage';
@@ -12,7 +11,7 @@ import { useInvoiceStorage } from '@/hooks/RepoHooks/useInvoiceStorage';
 import { SavedInvoiceSummary, InvoiceFilters } from '@/types/InvoiceTypes';
 
 export default function HistoryScreen() {
-  const { themeMode, currentTheme: colors } = useAppTheme();
+  const { currentTheme: colors } = useAppTheme();
 
   const { getInvoices, getInvoiceItems, deleteInvoiceById } = useInvoiceStorage();
   const { getProductById } = useProductStorage();
@@ -27,7 +26,6 @@ export default function HistoryScreen() {
 
   useEffect(() => {
     if (!filters.productId) {
-      setResolvedProductName('');
       return;
     }
     
@@ -40,7 +38,7 @@ export default function HistoryScreen() {
       }
     }
     resolveProductName();
-  }, [filters.productId]);
+  }, [filters.productId, getProductById]);
 
   const syncInvoiceTimeline = async (currentFilters: InvoiceFilters) => {
     const invoicesOfHistory = await getInvoices(currentFilters);
@@ -98,7 +96,7 @@ export default function HistoryScreen() {
         filters={filters}
         onFilterChange={handleFilterUpdate}
         onClearFilters={handleClearFilters}
-        selectedProductName={resolvedProductName}
+        selectedProductName={filters.productId ? resolvedProductName : ''}
       />
 
       {/* 1. Added style={styles.list} here */}

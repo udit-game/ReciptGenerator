@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { generateRandomId } from '@/utils/Crypto';
 import { safeGetAllAsync, safeRunAsync, safeGetFirstAsync } from '@/database/engine';
 import { ProductQueries } from '@/database/queries';
@@ -12,11 +13,11 @@ export interface Product {
 
 export function useProductStorage() {
   const db = useSQLiteContext()
-  const fetchAllProducts = async (): Promise<Product[]> => {
+  const fetchAllProducts = useCallback(async (): Promise<Product[]> => {
     return await safeGetAllAsync<void, Product>(db, ProductQueries.fetchAll);
-  };
+  }, [db]);
 
-  const insertNewProduct = async (name: string, hsnCode: string, defaultRate: number): Promise<Product> => {
+  const insertNewProduct = useCallback(async (name: string, hsnCode: string, defaultRate: number): Promise<Product> => {
     const newProduct: Product = {
       id: generateRandomId(),
       name,
@@ -26,11 +27,11 @@ export function useProductStorage() {
 
     await safeRunAsync<Product>(db, ProductQueries.insert, newProduct);
     return newProduct;
-  };
+  }, [db]);
 
-  const getProductById = async (id: string): Promise<Product | null> => {
+  const getProductById = useCallback(async (id: string): Promise<Product | null> => {
     return await safeGetFirstAsync<{ id: string }, Product>(db, ProductQueries.findById, { id });
-  };
+  }, [db]);
 
   return { fetchAllProducts, insertNewProduct, getProductById };
 }

@@ -1,9 +1,9 @@
-import { NativeTabs, Icon, Label, VectorIcon } from 'expo-router/unstable-native-tabs';
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAppTheme } from '@/hooks/Context/ThemeContext';
 
 export default function TabsLayout() {
-  const { themeMode, currentTheme: colors } = useAppTheme();
+  const { currentTheme: colors } = useAppTheme();
 
   return (
      <NativeTabs
@@ -20,32 +20,52 @@ export default function TabsLayout() {
         }}
      >
       <NativeTabs.Trigger name="Home">
-        <Label>Home</Label>
-        <Icon 
+        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
           sf={{ default: 'house', selected: 'house.fill' }} 
-          androidSrc={<VectorIcon family={MaterialIcons} name="home" />}
+          src={
+            <NativeTabs.Trigger.VectorIcon
+              family={MaterialIcons}
+              name="home"
+            />
+          }
         />
       </NativeTabs.Trigger>
       {/* <NativeTabs.Trigger name="Stats">
-        <Icon 
+        <NativeTabs.Trigger.Icon
           sf={{ default: 'chart.bar', selected: 'chart.bar.fill' }} 
-          androidSrc={<VectorIcon family={MaterialIcons} name="bar-chart" />}
+          src={
+            <NativeTabs.Trigger.VectorIcon
+              family={MaterialIcons}
+              name="bar-chart"
+            />
+          }
         />
-        <Label>Stats</Label>
+        <NativeTabs.Trigger.Label>Stats</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger> */}
       <NativeTabs.Trigger name="History">
-        <Icon 
+        <NativeTabs.Trigger.Icon
           sf={{ default: 'clock', selected: 'clock.fill' }} 
-          androidSrc={<VectorIcon family={MaterialIcons} name="access-time" />}
+          src={
+            <NativeTabs.Trigger.VectorIcon
+              family={MaterialIcons}
+              name="access-time"
+            />
+          }
         />
-        <Label>History</Label>
+        <NativeTabs.Trigger.Label>History</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="Logs">
-        <Icon 
+        <NativeTabs.Trigger.Icon
           sf={{ default: 'terminal', selected: 'terminal.fill' }} 
-          androidSrc={<VectorIcon family={MaterialIcons} name="terminal" />}
+          src={
+            <NativeTabs.Trigger.VectorIcon
+              family={MaterialIcons}
+              name="terminal"
+            />
+          }
         />
-        <Label>Logs</Label>
+        <NativeTabs.Trigger.Label>Logs</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

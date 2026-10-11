@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DefaultTheme, ThemeProvider } from 'expo-router/react-navigation';
 import { SQLiteProvider } from 'expo-sqlite';
 import { initializeDatabase } from '@/database/setup';
 import { DB_NAME } from '@/database/engine';

@@ -65,8 +65,26 @@ export default function LogsScreen() {
   };
 
   useEffect(() => {
-    loadLogs();
-  }, []);
+    let active = true;
+
+    const loadInitialLogs = async () => {
+      try {
+        const data = await getAllLogs();
+        if (active) {
+          setLogs(data);
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadInitialLogs();
+    return () => {
+      active = false;
+    };
+  }, [getAllLogs]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>

@@ -57,8 +57,25 @@ export function ClientDropdown({
   };
 
   useEffect(() => {
-    loadCatalog();
-  }, []);
+    let active = true;
+
+    fetchAllClients()
+      .then((data) => {
+        if (active) {
+          setClients(data);
+          setFilteredClients(data);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          Alert.alert("Error", "Could not load customer profiles catalog.");
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [fetchAllClients]);
 
   // Throttled inline search implementation
   useEffect(() => {
