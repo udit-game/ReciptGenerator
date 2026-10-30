@@ -1,4 +1,4 @@
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { NativeTabs } from 'expo-router/native-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAppTheme } from '@/hooks/Context/ThemeContext';
 

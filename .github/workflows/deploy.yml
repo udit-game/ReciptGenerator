@@ -21,7 +21,7 @@ jobs:
           cache: npm
 
       - name: Install Project Dependencies
-        run: npm install
+        run: npm ci --legacy-peer-deps
 
       - name: Install EAS CLI
         run: npm install --global eas-cli@latest

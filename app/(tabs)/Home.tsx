@@ -29,7 +29,7 @@ export default function HomeScreen() {
             styles.createButton, 
             { backgroundColor: colors.brand, opacity: pressed ? 0.9 : 1 }
           ]}
-          onPress={() => router.push('../new-bill')}
+          onPress={() => router.push('/new-bill')}
         >
           <MaterialIcons name="add" size={20} color="#FFF" style={{ marginRight: 6 }} />
           <Text style={styles.createButtonText}>Create Bill</Text>
